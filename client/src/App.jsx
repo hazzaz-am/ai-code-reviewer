@@ -4,13 +4,25 @@ import "prismjs/themes/prism-tomorrow.css";
 import prism from "prismjs";
 import { useState } from "react";
 import Editor from "react-simple-code-editor";
+import rehypeHighlight from "rehype-highlight";
+import Markdown from "react-markdown";
+import "highlight.js/styles/github-dark.css";
+import axios from "axios";
 
 export default function App() {
-	const [code, setCode] = useState(`function sum (a, b) {\n return a + b \n}`);
+	const [code, setCode] = useState("");
+	const [review, setReview] = useState("");
 
 	useEffect(() => {
 		prism.highlightAll();
 	}, []);
+
+	async function handleReview() {
+		const response = await axios.post(`${import.meta.env.VITE_API_KEY}/ai/get-review`, {
+			code,
+		});
+		setReview(response.data);
+	}
 
 	return (
 		<main>
@@ -32,9 +44,13 @@ export default function App() {
 						}}
 					/>
 				</div>
-				<div className="review">Preview</div>
+				<div className="review" onClick={handleReview}>
+					Review
+				</div>
 			</div>
-			<div className="right"></div>
+			<div className="right">
+				<Markdown rehypePlugins={[rehypeHighlight]}>{review}</Markdown>
+			</div>
 		</main>
 	);
 }
