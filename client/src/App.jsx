@@ -18,9 +18,12 @@ export default function App() {
 	}, []);
 
 	async function handleReview() {
-		const response = await axios.post(`${import.meta.env.VITE_API_KEY}/ai/get-review`, {
-			code,
-		});
+		const response = await axios.post(
+			`${import.meta.env.VITE_API_KEY}/ai/get-review`,
+			{
+				code,
+			}
+		);
 		setReview(response.data);
 	}
 
